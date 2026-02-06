@@ -195,7 +195,9 @@ chmod +x ~/.local/bin/claude-toggle
 export PROVIDER_URL="https://your-proxy.example.com/api/anthropic"
 export PROVIDER_TOKEN="your-token-here"
 
-# Shorthand function
+# Wrapper function — required! claude-toggle prints export/unset commands to
+# stdout. The eval executes them in your current shell. Without this, running
+# the script directly just prints text and doesn't modify your environment.
 ct() { eval "$(claude-toggle "$@")"; }
 ```
 
