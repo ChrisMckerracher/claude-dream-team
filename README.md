@@ -192,8 +192,8 @@ chmod +x ~/.local/bin/claude-toggle
 **2. Set your proxy credentials** (add to `~/.zshrc`):
 
 ```bash
-export CLAUDE_TOGGLE_BASE_URL="https://your-proxy.example.com/api/anthropic"
-export CLAUDE_TOGGLE_AUTH_TOKEN="your-token-here"
+export CLAUDE_TOGGLE_URL="https://your-proxy.example.com/api/anthropic"
+export CLAUDE_TOGGLE_TOKEN="your-token-here"
 
 # Shorthand function
 ct() { eval "$(claude-toggle "$@")"; }
