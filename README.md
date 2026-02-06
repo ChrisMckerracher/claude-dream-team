@@ -4,8 +4,11 @@ A Claude Code plugin that orchestrates specialized AI agents into a coordinated 
 
 ## Install
 
-```bash
-claude plugin add --marketplace github:ChrisMckerracher/claude-dream-team
+From within Claude Code, add the marketplace and install the plugin:
+
+```
+/plugin marketplace add ChrisMckerracher/claude-dream-team
+/plugin install dream-team@claude-dream-team
 ```
 
 ## What It Does
