@@ -222,15 +222,26 @@ ct status   # Show current mode
 
 ### Configuring Per-Agent Modes in CLAUDE.md
 
-Add a section to your project's `CLAUDE.md` telling the Team Lead which mode to toggle before spawning each agent:
+Add a section to your project's `CLAUDE.md` so the Team Lead knows which mode to toggle before spawning each agent group. The Team Lead is responsible for running `ct` — subagents should never toggle their own mode.
 
 ```markdown
 ## Agent API Mode Configuration
 
-Before spawning agents, toggle to the correct mode so new panes inherit the right env vars.
+**The Team Lead is responsible for toggling to the correct mode BEFORE spawning
+each agent group.** Agents inherit the tmux environment at spawn time — running
+`ct` inside an already-spawned agent does NOT retroactively change its mode.
+
+### Workflow
+
+1. Run `ct proxy` in your shell
+2. Spawn all high-volume agents (Coding, Product)
+3. Run `ct direct` in your shell
+4. Spawn all review/design agents (Architect, Code Review, QA, UI/UX Designer)
+
+Never rely on subagents to switch their own mode after spawning.
 
 ### Direct mode (`ct direct`)
-Use for agents that benefit from direct Anthropic API:
+Spawn these agents AFTER running `ct direct`:
 - **Team Lead**
 - **Architect**
 - **UI/UX Designer**
@@ -238,12 +249,12 @@ Use for agents that benefit from direct Anthropic API:
 - **QA**
 
 ### Proxy mode (`ct proxy`)
-Use for high-volume agents:
+Spawn these agents AFTER running `ct proxy`:
 - **Product**
 - **Coding**
 ```
 
-Adjust the split based on your budget and quality requirements. The Team Lead reads `CLAUDE.md` and will toggle before each spawn.
+Adjust the split based on your budget and quality requirements.
 
 ## Requirements
 
