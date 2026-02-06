@@ -43,14 +43,9 @@ if [ ! -d "$WORKTREE_DIR" ]; then
   mkdir -p "$WORKTREE_DIR"
 fi
 
-# Build dtq CLI if not already built
-DTQ_DIR="${CLAUDE_PLUGIN_ROOT}/tools/dtq"
+# Add dtq CLI to PATH if installed
+DTQ_DIR="${CLAUDE_PLUGIN_ROOT}/../tools/dtq"
 DTQ_BIN="${DTQ_DIR}/dtq"
-if command -v go &>/dev/null; then
-  if [ ! -f "$DTQ_BIN" ]; then
-    (cd "$DTQ_DIR" && go build -o dtq . 2>/dev/null)
-  fi
-fi
 if [ -f "$DTQ_BIN" ]; then
   export PATH="${DTQ_DIR}:${PATH}"
 fi

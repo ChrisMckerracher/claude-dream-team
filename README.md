@@ -4,11 +4,19 @@ A Claude Code plugin that orchestrates specialized AI agents into a coordinated 
 
 ## Install
 
-From within Claude Code, add the marketplace and install the plugin:
+**1. Build the `dtq` review queue CLI:**
+
+```bash
+cd tools/dtq
+go build -o dtq .
+```
+
+Make sure the built binary is on your PATH, or the plugin's session-init hook will add it automatically if it finds it at `tools/dtq/dtq`.
+
+**2. Install the plugin in Claude Code:**
 
 ```
-/plugin marketplace add ChrisMckerracher/claude-dream-team
-/plugin install dream-team@claude-dream-team
+/install-plugin /path/to/claude-dream-team/dream-team-plugin
 ```
 
 ## What It Does
@@ -95,18 +103,19 @@ project-root/
   coder-2-task-43/   # Agent 2's isolated workspace
 ```
 
-### Review Pipeline
+### Review Pipeline (`dtq`)
 
-Structured quality gates with task metadata tracking:
+Enforced quality gates via the `dtq` CLI — a lightweight Go binary that manages queue state, priority ordering, and cycle tracking:
 
+```bash
+dtq submit <task-id> --branch <branch>   # Coding agent submits for review
+dtq claim review                          # Code Review claims next item
+dtq approve <task-id>                     # Advance: review -> qa -> merge-ready
+dtq reject <task-id> --reason "..."       # Send back with feedback
+dtq status                                # View queue grouped by stage
 ```
-Coding Agent completes work
-  -> Code Review checks style, security, tests
-    -> Approved: QA validates against .feature files
-      -> Passed: merge to epic branch
-      -> Failed: back to Coding with failure report
-    -> Needs work: back to Coding with feedback
-```
+
+Pipeline: `coding -> review -> qa -> merge-ready`. Revisions get priority (LRU). Auto-escalation warning at 3+ review cycles. State persists in `.dtq/queue.json`.
 
 ### Laws of UX Reference
 
@@ -120,43 +129,50 @@ Complete reference of all 30 Laws of UX (from lawsofux.com) built into the UI/UX
 - **Spelunk staleness**: Reminds agents to update hash tracking after doc changes
 - **Subagent monitoring**: Flags incomplete tasks when agents stop
 
-## Plugin Structure
+## Repo Structure
 
 ```
-.claude-plugin/plugin.json    # Plugin manifest
-agents/                       # 7 agent definitions
-  team-lead.md
-  architect.md
-  product.md
-  coding.md
-  code-review.md
-  qa.md
-  ui-ux-designer.md
-commands/                     # 3 slash commands
-  epic.md
-  bug.md
-  status.md
-skills/                       # 11 skill modules
-  team-lead/SKILL.md          # Orchestration patterns, DAG templates
-  architect/SKILL.md          # ADR templates, drift resolution
-  product/SKILL.md            # User story frameworks, Gherkin patterns
-  coding/SKILL.md             # TDD cycle, worktree workflow
-  code-review/SKILL.md        # Review checklists, feedback templates
-  qa/SKILL.md                 # Playwright patterns, failure reports
-  ui-ux-designer/SKILL.md     # Design spec templates, a11y guidelines
-  spelunking/SKILL.md         # Hash-based code exploration system
-  git-worktree/SKILL.md       # Worktree lifecycle management
-  review-queue/SKILL.md       # Review pipeline protocols
-  laws-of-ux/SKILL.md         # All 30 UX laws with practical guidance
-hooks/
-  hooks.json                  # Event handler configuration
-  scripts/session-init.sh     # Directory scaffolding script
+tools/
+  dtq/                          # Review queue CLI (Go)
+    main.go                     # CLI dispatch and flag parsing
+    queue.go                    # State machine, file I/O, locking
+    go.mod
+dream-team-plugin/              # Claude Code plugin
+  .claude-plugin/plugin.json    # Plugin manifest
+  agents/                       # 7 agent definitions
+    team-lead.md
+    architect.md
+    product.md
+    coding.md
+    code-review.md
+    qa.md
+    ui-ux-designer.md
+  commands/                     # 3 slash commands
+    epic.md
+    bug.md
+    status.md
+  skills/                       # 11 skill modules
+    team-lead/SKILL.md
+    architect/SKILL.md
+    product/SKILL.md
+    coding/SKILL.md
+    code-review/SKILL.md
+    qa/SKILL.md
+    ui-ux-designer/SKILL.md
+    spelunking/SKILL.md
+    git-worktree/SKILL.md
+    review-queue/SKILL.md
+    laws-of-ux/SKILL.md
+  hooks/
+    hooks.json
+    scripts/session-init.sh
 ```
 
 ## Requirements
 
 - Claude Code CLI
 - Git (for worktree support)
+- Go 1.21+ (for building the `dtq` review queue CLI)
 - Node.js (for Playwright tests, when QA agent runs e2e validation)
 
 ## License
