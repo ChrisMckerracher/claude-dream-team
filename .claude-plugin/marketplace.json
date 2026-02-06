@@ -6,7 +6,7 @@
   "plugins": [
     {
       "name": "dream-team",
-      "source": ".",
+      "source": "./",
       "description": "Multi-agent orchestration system for software development. Coordinates specialized agents through structured Epic, Bug, and Status workflows."
     }
   ]
