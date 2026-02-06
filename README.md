@@ -136,6 +136,7 @@ Complete reference of all 30 Laws of UX (from lawsofux.com) built into the UI/UX
 
 ```
 tools/
+  claude-toggle                   # API provider toggle script (Bash)
   dtq/                          # Review queue CLI (Go)
     main.go                     # CLI dispatch and flag parsing
     queue.go                    # State machine, file I/O, locking
@@ -170,6 +171,79 @@ dream-team-plugin/              # Claude Code plugin
     hooks.json
     scripts/session-init.sh
 ```
+
+## Cost Optimization: Routing Agents Through a Proxy
+
+Not every agent needs direct Anthropic API access. Agents like Coding and Product do high-volume, lower-complexity work that can run through a cheaper proxy, while Architect and Code Review benefit from the full API. The included `claude-toggle` script lets you switch modes on the fly so each agent spawns with the right provider.
+
+### How It Works
+
+Dream Team spawns agents in new tmux panes. Each pane inherits the tmux session's environment. `claude-toggle` sets `ANTHROPIC_BASE_URL` and `ANTHROPIC_AUTH_TOKEN` on the tmux environment, so the next agent spawned picks up whichever mode you've toggled to.
+
+### Setup
+
+**1. Install the toggle script:**
+
+```bash
+cp tools/claude-toggle ~/.local/bin/
+chmod +x ~/.local/bin/claude-toggle
+```
+
+**2. Set your proxy credentials** (add to `~/.zshrc`):
+
+```bash
+export CLAUDE_TOGGLE_BASE_URL="https://your-proxy.example.com/api/anthropic"
+export CLAUDE_TOGGLE_AUTH_TOKEN="your-token-here"
+
+# Shorthand function
+ct() { eval "$(claude-toggle "$@")"; }
+```
+
+**3. (Optional) Auto-start in tmux:**
+
+Add to your `~/.tmux.conf` so new sessions start your main claude in direct mode, then set the tmux env to proxy for agents:
+
+```
+set-hook -g session-created '\
+  set status off ; \
+  send-keys "claude" Enter ; \
+  run-shell "$HOME/.local/bin/claude-toggle proxy >/dev/null 2>&1"'
+```
+
+This starts your main session on direct Anthropic, then flips the tmux env to proxy so spawned agents inherit it.
+
+### Usage
+
+```bash
+ct proxy    # Set proxy mode — next spawned agents use your proxy
+ct direct   # Set direct mode — next spawned agents use Anthropic API
+ct status   # Show current mode
+```
+
+### Configuring Per-Agent Modes in CLAUDE.md
+
+Add a section to your project's `CLAUDE.md` telling the Team Lead which mode to toggle before spawning each agent:
+
+```markdown
+## Agent API Mode Configuration
+
+Before spawning agents, toggle to the correct mode so new panes inherit the right env vars.
+
+### Direct mode (`ct direct`)
+Use for agents that benefit from direct Anthropic API:
+- **Team Lead**
+- **Architect**
+- **UI/UX Designer**
+- **Code Reviewer**
+- **QA**
+
+### Proxy mode (`ct proxy`)
+Use for high-volume agents:
+- **Product**
+- **Coding**
+```
+
+Adjust the split based on your budget and quality requirements. The Team Lead reads `CLAUDE.md` and will toggle before each spawn.
 
 ## Requirements
 

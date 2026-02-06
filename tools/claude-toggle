@@ -1,0 +1,55 @@
+#!/bin/bash
+# claude-toggle - Switch API provider for Dream Team agents
+#
+# Lets you route some agents through a cheaper proxy while keeping others on
+# direct Anthropic API. Toggle sets both the current shell and the tmux session
+# environment so new panes (agent spawns) inherit the right mode.
+#
+# Setup:
+#   1. Copy this script to ~/.local/bin/ (or anywhere on your PATH)
+#   2. chmod +x claude-toggle
+#   3. Set your provider credentials:
+#        export CLAUDE_TOGGLE_BASE_URL="https://your-proxy/api/anthropic"
+#        export CLAUDE_TOGGLE_AUTH_TOKEN="your-token-here"
+#   4. Add to your .zshrc:  ct() { eval "$(claude-toggle "$@")"; }
+#
+# Usage: ct proxy | ct direct | ct status
+
+# --- CONFIGURE VIA ENV VARS ---
+PROVIDER_BASE_URL="${CLAUDE_TOGGLE_BASE_URL:-}"
+PROVIDER_AUTH_TOKEN="${CLAUDE_TOGGLE_AUTH_TOKEN:-}"
+
+if [ -z "$PROVIDER_BASE_URL" ] && [ "${1:-status}" != "status" ] && [ "${1:-status}" != "direct" ] && [ "${1:-status}" != "d" ]; then
+  printf '\033[0;31mError: Set CLAUDE_TOGGLE_BASE_URL and CLAUDE_TOGGLE_AUTH_TOKEN env vars.\033[0m\n' >&2
+  exit 1
+fi
+
+case "${1:-status}" in
+  proxy|p)
+    # 1. tmux env for new panes (agent spawns)
+    [ -n "$TMUX" ] && tmux set-environment ANTHROPIC_BASE_URL "$PROVIDER_BASE_URL" 2>/dev/null \
+                    && tmux set-environment ANTHROPIC_AUTH_TOKEN "$PROVIDER_AUTH_TOKEN" 2>/dev/null
+    # 2. current shell
+    echo "export ANTHROPIC_BASE_URL=\"$PROVIDER_BASE_URL\""
+    echo "export ANTHROPIC_AUTH_TOKEN=\"$PROVIDER_AUTH_TOKEN\""
+    printf '\033[0;33m✦ proxy mode\033[0m (%s)\n' "$PROVIDER_BASE_URL" >&2
+    ;;
+  direct|d)
+    # 1. tmux env for new panes
+    [ -n "$TMUX" ] && tmux set-environment -r ANTHROPIC_BASE_URL 2>/dev/null \
+                    && tmux set-environment -r ANTHROPIC_AUTH_TOKEN 2>/dev/null
+    # 2. current shell
+    echo "unset ANTHROPIC_BASE_URL ANTHROPIC_AUTH_TOKEN"
+    printf '\033[0;36m✦ direct mode (Anthropic API)\033[0m\n' >&2
+    ;;
+  status|s)
+    if [ -n "$ANTHROPIC_BASE_URL" ]; then
+      printf '\033[0;33m✦ proxy mode\033[0m (%s)\n' "$ANTHROPIC_BASE_URL" >&2
+    else
+      printf '\033[0;36m✦ direct mode (Anthropic API)\033[0m\n' >&2
+    fi
+    ;;
+  *)
+    printf 'Usage: ct [proxy|direct|status]\n' >&2
+    ;;
+esac
