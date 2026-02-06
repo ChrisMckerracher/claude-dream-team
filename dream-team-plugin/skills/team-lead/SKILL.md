@@ -112,8 +112,8 @@ Managed via the `dtq` CLI tool:
 
 ```
 Coding Agent completes task
-  → dtq submit <task-id> --branch <branch>
-  → Messages Code Review Agent
+  → dtq submit <task-id> --branch <branch> --worktree <path>
+  → Messages Code Review Agent (include worktree path)
 
 Code Review Agent
   → dtq claim review

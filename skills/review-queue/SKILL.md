@@ -53,6 +53,7 @@ Use task metadata to track review pipeline stages:
 2. Coding Agent: SendMessage to Code Review Agent:
    "Task #{id} '{title}' is ready for review.
     Branch: {branch-name}
+    Worktree: {worktree-path}
     Files changed: {list}
     Summary: {brief description}"
 ```
@@ -63,6 +64,7 @@ Use task metadata to track review pipeline stages:
 2. Code Review Agent: SendMessage to QA Agent:
    "Task #{id} '{title}' passed code review and is ready for QA.
     Branch: {branch-name}
+    Worktree: {worktree-path}
     Feature file: {path or 'none'}"
 ```
 

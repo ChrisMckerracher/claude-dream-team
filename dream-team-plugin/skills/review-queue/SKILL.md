@@ -11,7 +11,7 @@ The review queue orchestrates the handoff pipeline between Coding agents, Code R
 ## dtq CLI Reference
 
 ```bash
-dtq submit <task-id> --branch <branch>   # Coding agent submits for review
+dtq submit <task-id> --branch <branch> --worktree <path>   # Coding agent submits for review
 dtq claim <stage>                         # Claim next item (review|qa)
 dtq approve <task-id>                     # Advance to next stage
 dtq reject <task-id> --reason <text>      # Send back for revision
@@ -24,8 +24,8 @@ Agent identity is set via the `DTQ_AGENT` environment variable.
 
 ```
 Coding Agent completes work
-  → dtq submit <task-id> --branch <branch>
-  → Messages Code Review Agent
+  → dtq submit <task-id> --branch <branch> --worktree <path>
+  → Messages Code Review Agent (include worktree path)
 
 Code Review Agent
   → dtq claim review
@@ -64,15 +64,15 @@ coding --submit--> review --approve--> qa --approve--> merge-ready
 
 ### Coding → Code Review
 ```bash
-dtq submit <task-id> --branch <branch>
+dtq submit <task-id> --branch <branch> --worktree <path>
 ```
-Then message the Code Review agent with task summary, files changed, and areas of concern.
+Then message the Code Review agent with task summary, branch, worktree path, files changed, and areas of concern.
 
 ### Code Review → QA (on approval)
 ```bash
 dtq approve <task-id>
 ```
-Then message the QA agent that the task is ready for validation.
+Then message the QA agent that the task is ready for validation, including the worktree path.
 
 ### Code Review → Coding (on rejection)
 ```bash

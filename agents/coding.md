@@ -99,14 +99,15 @@ Implementation workflow:
 
 ## Git Worktree Workflow
 
-Each coding agent works in an isolated worktree:
+Each coding agent works in an isolated worktree. The Team Lead specifies the worktree path in your task assignment — use that path, don't invent your own.
 
 ```bash
-# Create worktree for your task
-git worktree add ../worktrees/{agent-name}-{task-id} {base-branch}
+# Create worktree at the path specified in your task assignment
+# (e.g. Worktree: ../worktrees/coder-1-task-42)
+git worktree add {assigned-worktree-path} {base-branch}
 
 # Work in your worktree
-cd ../worktrees/{agent-name}-{task-id}
+cd {assigned-worktree-path}
 
 # Create your feature branch
 git checkout -b {agent-name}/{task-slug}
@@ -117,6 +118,7 @@ git checkout -b {agent-name}/{task-slug}
 ```
 
 **Worktree Rules:**
+- Use the worktree path assigned by the Team Lead in your task description
 - Always create a new worktree for each task
 - Name branches: `{your-agent-name}/{task-slug}`
 - Never work directly on the epic branch
@@ -127,8 +129,9 @@ git checkout -b {agent-name}/{task-slug}
 When your implementation is ready:
 1. Ensure all tests pass locally
 2. Commit your changes with a clear message
-3. Update the task status to indicate it's ready for review
-4. Message the Code Review agent with:
+3. Submit to the review queue: `dtq submit <task-id> --branch <branch> --worktree <worktree-path>`
+4. Update the task status to indicate it's ready for review
+5. Message the Code Review agent with:
    - Task ID and brief description
    - Files changed
    - Any areas of concern or uncertainty

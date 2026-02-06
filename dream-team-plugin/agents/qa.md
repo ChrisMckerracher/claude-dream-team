@@ -37,7 +37,7 @@ You are the QA Agent on the Dream Team, responsible for ensuring that every piec
 
 ## Validation Pipeline
 
-When a task arrives for QA validation, claim it from the queue:
+When a task arrives for QA validation, work in the worktree path provided in the handoff message so you're running tests against the actual code. Claim it from the queue:
 ```bash
 dtq claim qa
 ```

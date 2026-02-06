@@ -45,7 +45,7 @@ You are the Code Review Agent on the Dream Team, responsible for reviewing all c
 - Understand what the change is supposed to accomplish
 
 ### Step 3: Review the Code
-Examine the diff/changes for:
+Navigate to the worktree path provided in the handoff message to review the actual files on disk. Examine the diff/changes for:
 
 **Correctness:**
 - Does the code do what the task requires?

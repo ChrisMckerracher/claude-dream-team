@@ -42,17 +42,7 @@
         ]
       }
     ],
-    "PostToolUse": [
-      {
-        "matcher": "Write|Edit",
-        "hooks": [
-          {
-            "type": "prompt",
-            "prompt": "If the file just written/edited is in the docs/spelunk/ directory, check if docs/spelunk/_staleness.json needs to be updated with new file hashes. Remind the agent to update staleness tracking if they haven't. Respond with 'proceed' if staleness is already handled or the file is not a spelunk doc."
-          }
-        ]
-      }
-    ],
+    "PostToolUse": [],
     "SubagentStop": [
       {
         "matcher": "",

@@ -22,6 +22,7 @@ type QueueItem struct {
 	TaskID      string         `json:"taskId"`
 	Stage       string         `json:"stage"`
 	Branch      string         `json:"branch"`
+	Worktree    string         `json:"worktree"`
 	ClaimedBy   string         `json:"claimedBy,omitempty"`
 	Cycles      int            `json:"cycles"`
 	SubmittedAt string         `json:"submittedAt"`
@@ -105,7 +106,7 @@ func now() string {
 }
 
 // Submit creates or re-submits an item for review.
-func Submit(taskID, branch, agent string) (*QueueItem, error) {
+func Submit(taskID, branch, worktree, agent string) (*QueueItem, error) {
 	var result *QueueItem
 	err := withLock(func(q *Queue) error {
 		item, exists := q.Items[taskID]
@@ -117,6 +118,7 @@ func Submit(taskID, branch, agent string) (*QueueItem, error) {
 			item = &QueueItem{
 				TaskID:      taskID,
 				Branch:      branch,
+				Worktree:    worktree,
 				Cycles:      0,
 				SubmittedAt: t,
 				History:     []HistoryEntry{},
@@ -125,6 +127,7 @@ func Submit(taskID, branch, agent string) (*QueueItem, error) {
 		}
 		item.Stage = "review"
 		item.Branch = branch
+		item.Worktree = worktree
 		item.ClaimedBy = ""
 		item.UpdatedAt = t
 		item.History = append(item.History, HistoryEntry{

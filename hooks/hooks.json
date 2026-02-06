@@ -1,56 +1,59 @@
 {
-  "SessionStart": [
-    {
-      "matcher": "",
-      "hooks": [
-        {
-          "type": "command",
-          "command": "bash ${CLAUDE_PLUGIN_ROOT}/hooks/scripts/session-init.sh",
-          "timeout": 10
-        }
-      ]
-    }
-  ],
-  "PreToolUse": [
-    {
-      "matcher": "Bash",
-      "hooks": [
-        {
-          "type": "prompt",
-          "prompt": "If this Bash command involves 'git worktree add' or 'git worktree remove', verify that: (1) The worktree directory follows the convention ../worktrees/{agent-name}-task-{id}, (2) A feature branch will be created (not working directly on the epic branch), (3) The worktree doesn't already exist. If all checks pass or the command is not worktree-related, respond with 'proceed'. If there's an issue, explain what needs to change."
-        }
-      ]
-    },
-    {
-      "matcher": "Bash",
-      "hooks": [
-        {
-          "type": "prompt",
-          "prompt": "If this Bash command involves 'git push --force' or 'git reset --hard' or 'git clean -f', BLOCK the command and explain that destructive git operations require explicit user confirmation. Respond with 'proceed' for all other commands."
-        }
-      ]
-    }
-  ],
-  "PostToolUse": [
-    {
-      "matcher": "Write|Edit",
-      "hooks": [
-        {
-          "type": "prompt",
-          "prompt": "If the file just written/edited is in the docs/spelunk/ directory, check if docs/spelunk/_staleness.json needs to be updated with new file hashes. Remind the agent to update staleness tracking if they haven't. Respond with 'proceed' if staleness is already handled or the file is not a spelunk doc."
-        }
-      ]
-    }
-  ],
-  "SubagentStop": [
-    {
-      "matcher": "",
-      "hooks": [
-        {
-          "type": "prompt",
-          "prompt": "A teammate agent has stopped. Check if they completed their assigned task by looking at the task list. If their task is not marked as completed, flag this to the team lead so they can investigate. Respond with 'proceed' if the task was completed successfully."
-        }
-      ]
-    }
-  ]
+  "description": "Dream Team hooks for worktree validation, destructive git protection, spelunk staleness tracking, and subagent monitoring",
+  "hooks": {
+    "SessionStart": [
+      {
+        "matcher": "",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash ${CLAUDE_PLUGIN_ROOT}/hooks/scripts/session-init.sh",
+            "timeout": 10
+          }
+        ]
+      }
+    ],
+    "PreToolUse": [
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "prompt",
+            "prompt": "If this Bash command involves 'git worktree add' or 'git worktree remove', verify that: (1) The worktree directory follows the convention ../worktrees/{agent-name}-task-{id}, (2) A feature branch will be created (not working directly on the epic branch), (3) The worktree doesn't already exist. If all checks pass or the command is not worktree-related, respond with 'proceed'. If there's an issue, explain what needs to change."
+          }
+        ]
+      },
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "prompt",
+            "prompt": "If this Bash command involves 'git push --force' or 'git reset --hard' or 'git clean -f', BLOCK the command and explain that destructive git operations require explicit user confirmation. Respond with 'proceed' for all other commands."
+          }
+        ]
+      }
+    ],
+    "PostToolUse": [
+      {
+        "matcher": "Write|Edit",
+        "hooks": [
+          {
+            "type": "prompt",
+            "prompt": "If the file just written/edited is in the docs/spelunk/ directory, check if docs/spelunk/_staleness.json needs to be updated with new file hashes. Remind the agent to update staleness tracking if they haven't. Respond with 'proceed' if staleness is already handled or the file is not a spelunk doc."
+          }
+        ]
+      }
+    ],
+    "SubagentStop": [
+      {
+        "matcher": "",
+        "hooks": [
+          {
+            "type": "prompt",
+            "prompt": "A teammate agent has stopped. Check if they completed their assigned task by looking at the task list. If their task is not marked as completed, flag this to the team lead so they can investigate. Respond with 'proceed' if the task was completed successfully."
+          }
+        ]
+      }
+    ]
+  }
 }

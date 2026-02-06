@@ -49,14 +49,18 @@ func main() {
 
 func cmdSubmit(args []string, agent string) (interface{}, error) {
 	if len(args) < 1 {
-		return nil, fmt.Errorf("usage: dtq submit <task-id> --branch <branch>")
+		return nil, fmt.Errorf("usage: dtq submit <task-id> --branch <branch> --worktree <path>")
 	}
 	taskID := args[0]
 	branch := flagValue(args[1:], "--branch")
 	if branch == "" {
 		return nil, fmt.Errorf("--branch is required")
 	}
-	item, err := Submit(taskID, branch, agent)
+	worktree := flagValue(args[1:], "--worktree")
+	if worktree == "" {
+		return nil, fmt.Errorf("--worktree is required")
+	}
+	item, err := Submit(taskID, branch, worktree, agent)
 	if err != nil {
 		return nil, err
 	}
@@ -79,6 +83,7 @@ func cmdClaim(args []string, agent string) (interface{}, error) {
 		"taskId":    item.TaskID,
 		"stage":     item.Stage,
 		"branch":    item.Branch,
+		"worktree":  item.Worktree,
 		"claimedBy": item.ClaimedBy,
 		"cycles":    item.Cycles,
 	}, nil
@@ -157,7 +162,7 @@ func usage() {
 	fmt.Fprintln(os.Stderr, `dtq — Dream Team Queue CLI
 
 Usage:
-  dtq submit <task-id> --branch <branch>   Submit work for review
+  dtq submit <task-id> --branch <branch> --worktree <path>   Submit work for review
   dtq claim <stage>                         Claim next item (review|qa)
   dtq approve <task-id>                     Approve and advance to next stage
   dtq reject <task-id> --reason <text>      Reject and send back for revision

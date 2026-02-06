@@ -122,8 +122,13 @@ git worktree list
 git worktree list --porcelain
 ```
 
+## Worktree Assignment
+
+The Team Lead assigns worktree paths when creating tasks. Coding agents should use the assigned path from their task description (e.g. `Worktree: ../worktrees/coder-1-task-42`), not invent their own. This ensures the worktree path is known throughout the pipeline — Code Review and QA agents receive it via handoff messages and dtq.
+
 ## Rules
 
+- **Always** use the worktree path assigned by the Team Lead
 - **Never** work directly on the epic branch from a worktree
 - **Always** create a feature branch within the worktree
 - **Always** rebase (not merge) to stay current with epic branch

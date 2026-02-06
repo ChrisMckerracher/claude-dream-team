@@ -70,7 +70,7 @@ You are the strategic decision-maker and coordinator. You:
 1. Determine if this needs a new team or extends the existing one. If new team, call TeamDelete first
 2. Spawn QA Agent (1)
 3. Spawn Code Review Agent (1)
-4. Spawn Coding Agent(s) as needed - each works in a git worktree
+4. Spawn Coding Agent(s) as needed - each works in a git worktree. Specify the worktree path in each task description: `Worktree: ../worktrees/{agent-name}-task-{task-id}`
 5. Coding agents implement tasks, write tests, and submit MRs
 6. Code Review agent monitors the review queue and reviews submissions
 7. QA agent validates approved code against product specs
