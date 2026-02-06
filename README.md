@@ -2,6 +2,9 @@
 
 A Claude Code plugin that orchestrates specialized AI agents into a coordinated development team. Run `/epic` to plan and build features end-to-end, or `/bug` to investigate and fix issues through collaborative multi-agent workflows.
 
+<img width="1440" height="870" alt="image" src="https://github.com/user-attachments/assets/4083150a-ee56-4fd2-b5e2-5781faf76cba" />
+
+
 ## Install
 
 **1. Build the `dtq` review queue CLI:**
