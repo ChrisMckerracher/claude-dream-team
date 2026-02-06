@@ -9,27 +9,27 @@
 #   1. Copy this script to ~/.local/bin/ (or anywhere on your PATH)
 #   2. chmod +x claude-toggle
 #   3. Add to your .zshrc:
-#        export CLAUDE_TOGGLE_URL="https://your-proxy/api/anthropic"
-#        export CLAUDE_TOGGLE_TOKEN="your-token-here"
+#        export PROVIDER_URL="https://your-proxy/api/anthropic"
+#        export PROVIDER_TOKEN="your-token-here"
 #        ct() { eval "$(claude-toggle "$@")"; }
 #
 # Usage: ct proxy | ct direct | ct status
 #
 # When toggled to proxy, sets ANTHROPIC_BASE_URL and ANTHROPIC_AUTH_TOKEN
-# from your CLAUDE_TOGGLE_URL and CLAUDE_TOGGLE_TOKEN values.
+# from your PROVIDER_URL and PROVIDER_TOKEN values.
 # When toggled to direct, unsets them so Claude uses the Anthropic API.
 
 case "${1:-status}" in
   proxy|p)
-    if [ -z "$CLAUDE_TOGGLE_URL" ]; then
-      printf '\033[0;31mError: Set CLAUDE_TOGGLE_URL and CLAUDE_TOGGLE_TOKEN env vars.\033[0m\n' >&2
+    if [ -z "$PROVIDER_URL" ]; then
+      printf '\033[0;31mError: Set PROVIDER_URL and PROVIDER_TOKEN env vars.\033[0m\n' >&2
       exit 1
     fi
-    [ -n "$TMUX" ] && tmux set-environment ANTHROPIC_BASE_URL "$CLAUDE_TOGGLE_URL" 2>/dev/null \
-                    && tmux set-environment ANTHROPIC_AUTH_TOKEN "$CLAUDE_TOGGLE_TOKEN" 2>/dev/null
-    echo "export ANTHROPIC_BASE_URL=\"$CLAUDE_TOGGLE_URL\""
-    echo "export ANTHROPIC_AUTH_TOKEN=\"$CLAUDE_TOGGLE_TOKEN\""
-    printf '\033[0;33m✦ proxy mode\033[0m (%s)\n' "$CLAUDE_TOGGLE_URL" >&2
+    [ -n "$TMUX" ] && tmux set-environment ANTHROPIC_BASE_URL "$PROVIDER_URL" 2>/dev/null \
+                    && tmux set-environment ANTHROPIC_AUTH_TOKEN "$PROVIDER_TOKEN" 2>/dev/null
+    echo "export ANTHROPIC_BASE_URL=\"$PROVIDER_URL\""
+    echo "export ANTHROPIC_AUTH_TOKEN=\"$PROVIDER_TOKEN\""
+    printf '\033[0;33m✦ proxy mode\033[0m (%s)\n' "$PROVIDER_URL" >&2
     ;;
   direct|d)
     [ -n "$TMUX" ] && tmux set-environment -r ANTHROPIC_BASE_URL 2>/dev/null \
