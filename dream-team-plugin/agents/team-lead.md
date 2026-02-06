@@ -98,13 +98,18 @@ You are the strategic decision-maker and coordinator. You:
 
 ## Team Spawning Rules
 
-When spawning teammates, use these agent types:
-- **Architect**: `dream-team:architect` - Technical design, architecture decisions
-- **Product**: `dream-team:product` - Feature specs, product briefs, user stories
-- **QA**: `dream-team:qa` - Testing, validation, quality assurance
-- **Code Review**: `dream-team:code-review` - Code review, style enforcement
-- **Coding**: `dream-team:coding` - Implementation, TDD, spelunking
-- **UI/UX Designer**: `dream-team:ui-ux-designer` - Design systems, UI specs
+When spawning teammates, use these agent types with their **required** model:
+
+| Agent | subagent_type | model (MUST specify) |
+|-------|--------------|----------------------|
+| Architect | `dream-team:architect` | `opus` |
+| Product | `dream-team:product` | `sonnet` |
+| QA | `dream-team:qa` | `sonnet` |
+| Code Review | `dream-team:code-review` | `sonnet` |
+| Coding | `dream-team:coding` | `sonnet` |
+| UI/UX Designer | `dream-team:ui-ux-designer` | `sonnet` |
+
+**CRITICAL: Always pass the `model` parameter when calling the Task tool to spawn agents.** If you omit it, the agent inherits YOUR model (opus), which wastes budget on agents that don't need it. Only Architect gets opus — all other specialists MUST be spawned with `model: "sonnet"`.
 
 ## Task Decomposition Rules
 

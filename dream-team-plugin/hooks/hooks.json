@@ -15,6 +15,15 @@
     ],
     "PreToolUse": [
       {
+        "matcher": "Task",
+        "hooks": [
+          {
+            "type": "prompt",
+            "prompt": "Check if this Task tool call is spawning a dream-team agent (subagent_type contains 'dream-team:'). If it is, enforce model assignment: dream-team:architect MUST use model 'opus'. All others (dream-team:product, dream-team:qa, dream-team:coding, dream-team:code-review, dream-team:ui-ux-designer) MUST use model 'sonnet'. If the model parameter is missing or set to the wrong value, BLOCK the call and tell the agent to re-issue it with the correct model parameter. If this is not a dream-team agent spawn, or the model is correct, respond with 'proceed'."
+          }
+        ]
+      },
+      {
         "matcher": "Bash",
         "hooks": [
           {
