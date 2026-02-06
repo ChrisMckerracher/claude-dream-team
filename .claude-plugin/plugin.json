@@ -1,0 +1,25 @@
+{
+  "name": "dream-team",
+  "version": "1.0.0",
+  "description": "Multi-agent orchestration system for software development. Coordinates specialized agents (Team Lead, Architect, Product, QA, Code Review, Coding, UI/UX Designer) through structured Epic, Bug Discovery, and Continuous Improvement workflows with spelunk-based code exploration, git worktree isolation, and review queue management.",
+  "author": {
+    "name": "Chris McKerracher",
+    "url": "https://github.com/ChrisMckerracher"
+  },
+  "repository": "https://github.com/ChrisMckerracher/dream-team-plugin",
+  "license": "MIT",
+  "keywords": [
+    "multi-agent",
+    "orchestration",
+    "team",
+    "code-review",
+    "qa",
+    "architect",
+    "product",
+    "ui-ux",
+    "spelunking",
+    "worktree",
+    "epic",
+    "bug-discovery"
+  ]
+}
