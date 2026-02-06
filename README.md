@@ -178,7 +178,13 @@ Not every agent needs direct Anthropic API access. Agents like Coding and Produc
 
 ### How It Works
 
-Dream Team spawns agents in new tmux panes. Each pane inherits the tmux session's environment. `claude-toggle` sets `ANTHROPIC_BASE_URL` and `ANTHROPIC_AUTH_TOKEN` on the tmux environment, so the next agent spawned picks up whichever mode you've toggled to.
+`claude-toggle` prints shell commands (`export ...` / `unset ...`) to stdout. The `ct()` wrapper function runs `eval` on that output so it takes effect in your current shell. Running the script directly without `eval` just prints text and does nothing.
+
+`ct` toggles two layers simultaneously:
+1. **Current shell** env vars (immediate effect via `eval`)
+2. **tmux environment** via `set-environment` (new panes inherit)
+
+Dream Team spawns agents in new tmux panes. Each pane inherits the tmux session's environment at spawn time. So when you run `ct proxy`, both your shell and the tmux env get `ANTHROPIC_BASE_URL` and `ANTHROPIC_AUTH_TOKEN` — the next agent spawned picks up whichever mode you've toggled to.
 
 ### Setup
 
