@@ -1,0 +1,13 @@
+{
+  "name": "claude-dream-team",
+  "owner": {
+    "name": "Chris McKerracher"
+  },
+  "plugins": [
+    {
+      "name": "dream-team",
+      "source": "./",
+      "description": "Multi-agent orchestration system for software development. Coordinates specialized agents through structured Epic, Bug, and Status workflows."
+    }
+  ]
+}
