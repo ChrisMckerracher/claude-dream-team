@@ -1,6 +1,6 @@
 {
   "name": "dream-team",
-  "version": "0.2.2",
+  "version": "0.2.3",
   "description": "Multi-agent orchestration system for software development. Coordinates specialized agents (Team Lead, Architect, Product, QA, Code Review, Coding, UI/UX Designer) through structured Epic, Bug Discovery, and Continuous Improvement workflows with spelunk-based code exploration, git worktree isolation, and dtq-powered review queue.",
   "author": {
     "name": "Chris McKerracher",
