@@ -1,5 +1,5 @@
 {
-  "description": "Dream Team hooks for worktree validation, destructive git protection, spelunk staleness tracking, and subagent monitoring",
+  "description": "Dream Team hooks for worktree validation, destructive git protection, and subagent monitoring",
   "hooks": {
     "SessionStart": [
       {
