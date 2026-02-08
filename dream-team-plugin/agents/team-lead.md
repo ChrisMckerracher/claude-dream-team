@@ -82,11 +82,14 @@ You are a coordinator, not an investigator. You NEVER read code to analyze it, t
 9. On success: agents use `dtq approve` to advance; merge-ready items get merged
 10. Critical errors escalate to you for coordination with Product/Architect
 
+**IMPORTANT: Do NOT move to Full Validation until the dtq pipeline has fully drained.** Run `dtq status` and confirm every item is in `merge-ready` stage. A coding agent finishing its last task does NOT mean the pipeline is done — Code Review and QA may still be processing. Wait for all items to clear the pipeline before proceeding.
+
 **Full Validation Phase:**
-1. QA agent decomposes all product feature flows into test suites
-2. Prefer Playwright tests with video enabled; API tests when UI tests don't apply
-3. Any broken flows escalate to you
-4. May trigger new design phases or new coding tasks
+1. Run `dtq status` to confirm all items are `merge-ready`. If any are still in `review`, `qa`, or `coding`, STOP and wait
+2. QA agent decomposes all product feature flows into test suites
+3. Prefer Playwright tests with video enabled; API tests when UI tests don't apply
+4. Any broken flows escalate to you
+5. May trigger new design phases or new coding tasks
 
 ### Bug Discovery Workflow
 

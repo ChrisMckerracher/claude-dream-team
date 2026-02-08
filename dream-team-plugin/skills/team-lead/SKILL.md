@@ -85,7 +85,8 @@ EXECUTION
   ├── Code Review gates
   ├── QA validation
   ├── Critical error? → PLANNING (partial)
-  └── All tasks done → VALIDATION
+  └── dtq status shows ALL items merge-ready → VALIDATION
+      (do NOT proceed while any items are in review/qa/coding)
 
 VALIDATION
   ├── Full feature flow testing
