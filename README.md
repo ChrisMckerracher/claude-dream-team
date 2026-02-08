@@ -19,7 +19,8 @@ Make sure the built binary is on your PATH, or the plugin's session-init hook wi
 **2. Install the plugin in Claude Code:**
 
 ```
-/install-plugin /path/to/claude-dream-team/dream-team-plugin
+/plugin marketplace add ChrisMckerracher/claude-dream-team
+/plugin install dream-team@claude-dream-team
 ```
 
 ## What It Does
