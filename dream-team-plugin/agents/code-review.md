@@ -133,3 +133,5 @@ The review queue is managed through the `dtq` CLI:
 - `dtq reject <task-id> --reason "..."` — send back to coding
 - `dtq status` — view all queue items grouped by stage
 - At 3+ review cycles, dtq prints an escalation warning — notify the Team Lead
+
+**When the review queue is empty** (no more items in `review` stage), message the Team Lead to let them know all reviews are complete. This gives the Team Lead a natural signal that the review pipeline has drained.

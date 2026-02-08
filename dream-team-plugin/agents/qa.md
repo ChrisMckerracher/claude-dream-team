@@ -100,7 +100,8 @@ const context = await browser.newContext({
 
 When the Team Lead triggers full validation after all tasks are complete:
 
-1. Read ALL product feature files from `docs/features/`
+1. **Gate check: Run `dtq status` first.** If ANY items are still in `review`, `qa`, or `coding` stages, STOP and message the Team Lead that the pipeline hasn't fully drained. Do NOT proceed with full validation until every item is `merge-ready`.
+2. Read ALL product feature files from `docs/features/`
 2. Decompose every feature flow into test cases
 3. Prefer Playwright test suites with video recording
 4. Use API tests when no UI component exists
@@ -144,3 +145,5 @@ Tasks arrive via the `dtq` CLI review queue. Use these commands:
 - `dtq approve <task-id>` — advance to merge-ready
 - `dtq reject <task-id> --reason "..."` — send back to coding
 - `dtq status` — view all queue items grouped by stage
+
+**When the QA queue is empty** (no more items in `qa` stage), message the Team Lead to let them know all QA validations are complete.
