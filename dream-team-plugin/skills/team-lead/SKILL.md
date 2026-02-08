@@ -30,6 +30,7 @@ Optional:
 ```
 Spawn per-lead:
 - Coding Agent OR QA Agent per investigation lead
+- Team Lead delegates all investigation — never analyzes code directly
 (best judgment based on nature of the lead)
 ```
 
