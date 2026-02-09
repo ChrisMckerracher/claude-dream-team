@@ -11,14 +11,14 @@ The review queue orchestrates the handoff pipeline between Coding agents, Code R
 ## dtq CLI Reference
 
 ```bash
-dtq submit <task-id> --branch <branch> --worktree <path>   # Coding agent submits for review
-dtq claim <stage>                         # Claim next item (review|qa)
-dtq approve <task-id>                     # Advance to next stage
-dtq reject <task-id> --reason <text>      # Send back for revision
+dtq submit <task-id> --branch <branch> --worktree <path> --agent <name>  # Submit for review
+dtq claim <stage> --agent <name>          # Claim next item (review|qa)
+dtq approve <task-id> --agent <name>      # Advance to next stage
+dtq reject <task-id> --reason <text> --agent <name>  # Send back for revision
 dtq status [task-id]                      # Show queue or item detail
 ```
 
-Agent identity is set via the `DTQ_AGENT` environment variable.
+Agent identity is passed via the `--agent` flag. The queue directory is auto-detected from the git root (no `DTQ_QUEUE_DIR` env var needed).
 
 ## Queue Flow (Distributed Peer-to-Peer)
 
@@ -26,29 +26,29 @@ Each task flows independently through the pipeline as soon as it's submitted. Ta
 
 ```
 Coding Agent completes work
-  → dtq submit <task-id> --branch <branch> --worktree <path>
+  → dtq submit <task-id> --branch <branch> --worktree <path> --agent coder-1
   → Sends ping via SendMessage to Code Review Agent
 
 Code Review Agent (ping-reactive)
   → Receives ping from Coding Agent
-  → dtq claim review  (claims the submitted item)
+  → dtq claim review --agent code-review  (claims the submitted item)
   → Reviews code
   → On APPROVED:
-      dtq approve <task-id>  (advances to qa)
+      dtq approve <task-id> --agent code-review  (advances to qa)
       Sends ping via SendMessage to QA Agent
   → On NEEDS_WORK:
-      dtq reject <task-id> --reason "..."  (back to coding)
+      dtq reject <task-id> --reason "..." --agent code-review  (back to coding)
       Sends feedback via SendMessage to Coding Agent
 
 QA Agent (ping-reactive)
   → Receives ping from Code Review Agent
-  → dtq claim qa  (claims the approved item)
+  → dtq claim qa --agent qa  (claims the approved item)
   → Validates against specs or auto-approves if trivial
   → On PASSED:
-      dtq approve <task-id>  (advances to merge-ready)
+      dtq approve <task-id> --agent qa  (advances to merge-ready)
       Sends merge-ready ping via SendMessage to Team Lead
   → On FAILED:
-      dtq reject <task-id> --reason "..."  (back to coding)
+      dtq reject <task-id> --reason "..." --agent qa  (back to coding)
       Sends failure report via SendMessage to Coding Agent
 
 Team Lead (merge coordinator)
@@ -78,31 +78,31 @@ coding --submit--> review --approve--> qa --approve--> merge-ready
 
 ### Coding → Code Review
 ```bash
-dtq submit <task-id> --branch <branch> --worktree <path>
+dtq submit <task-id> --branch <branch> --worktree <path> --agent coder-1
 ```
 Then message the Code Review agent with task summary, branch, worktree path, files changed, and areas of concern.
 
 ### Code Review → QA (on approval)
 ```bash
-dtq approve <task-id>
+dtq approve <task-id> --agent code-review
 ```
 Then message the QA agent that the task is ready for validation, including the worktree path.
 
 ### Code Review → Coding (on rejection)
 ```bash
-dtq reject <task-id> --reason "summary of required changes"
+dtq reject <task-id> --reason "summary of required changes" --agent code-review
 ```
 Then message the Coding agent with detailed feedback.
 
 ### QA → Merge (on pass)
 ```bash
-dtq approve <task-id>
+dtq approve <task-id> --agent qa
 ```
 Then message the Team Lead that the task is ready to merge.
 
 ### QA → Coding (on failure)
 ```bash
-dtq reject <task-id> --reason "summary of failures"
+dtq reject <task-id> --reason "summary of failures" --agent qa
 ```
 Then message the Coding agent with detailed failure report.
 

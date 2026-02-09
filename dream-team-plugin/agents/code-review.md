@@ -42,16 +42,15 @@ You operate reactively. Wait for a ping from a Coding agent, then claim.
 <example>
 Context: Coding agent sends "Task 5 ready for review"
 CORRECT response:
-1. Set environment: export DTQ_QUEUE_DIR="/path/to/main/repo/.dtq" && export DTQ_AGENT=code-review
-2. Run: dtq claim review
-3. dtq returns the task details (branch, worktree, cycle count)
-4. Navigate to the worktree path and begin review
+1. Run: dtq claim review --agent code-review
+2. dtq returns the task details (branch, worktree, cycle count)
+3. Navigate to the worktree path and begin review
 </example>
 
 <example>
 Context: You just finished a review (approved or rejected)
 CORRECT — DRAIN THE QUEUE:
-1. Run: dtq claim review
+1. Run: dtq claim review --agent code-review
 2. If it returns a task, review it. Repeat until no unclaimed items.
 3. Only go idle when the queue is empty.
 
@@ -63,7 +62,7 @@ after each review before going idle.
 <example>
 Context: No pending pings and you are idle
 INCORRECT — DO NOT DO THIS:
-1. Run: dtq claim review  (proactive polling with no trigger)
+1. Run: dtq claim review --agent code-review  (proactive polling with no trigger)
 2. If nothing, wait 30 seconds and try again
 
 WHY THIS IS WRONG: Proactive polling without a trigger wastes API turns.
@@ -130,14 +129,14 @@ Navigate to the worktree path provided in the handoff message to review the actu
    - Suggested fix or approach
 3. Reject via the review queue:
    ```bash
-   dtq reject <task-id> --reason "summary of required changes"
+   dtq reject <task-id> --reason "summary of required changes" --agent code-review
    ```
 4. Message the Coding agent with your detailed review
 
 **If changes are approved:**
 1. Approve via the review queue (advances to QA stage):
    ```bash
-   dtq approve <task-id>
+   dtq approve <task-id> --agent code-review
    ```
 2. Send a direct message to the QA agent (NOT Team Lead):
    ```
@@ -177,17 +176,12 @@ Escalate to Team Lead when:
 
 ## Review Queue Management
 
-**CRITICAL**: Always set `DTQ_QUEUE_DIR` before running any dtq command, especially when working from worktrees:
-```bash
-export DTQ_QUEUE_DIR="/path/to/main/repo/.dtq"
-export DTQ_AGENT=code-review
-```
-Without this, dtq may read/write a separate queue file in your current directory and you will miss submissions from coding agents.
+The review queue is managed through the `dtq` CLI with the `--agent` flag:
+- `dtq claim review --agent code-review` — claim the next item for review (revisions prioritized, then FIFO)
+- `dtq approve <task-id> --agent code-review` — advance to QA, then immediately run `dtq claim review --agent code-review` again to drain the queue
+- `dtq reject <task-id> --reason "..." --agent code-review` — send back to coding, then immediately run `dtq claim review --agent code-review` again
 
-The review queue is managed through the `dtq` CLI:
-- `dtq claim review` — claim the next item for review (revisions prioritized, then FIFO)
-- `dtq approve <task-id>` — advance to QA, then immediately run `dtq claim review` again to drain the queue
-- `dtq reject <task-id> --reason "..."` — send back to coding, then immediately run `dtq claim review` again
+The queue directory is auto-detected from the git root — no environment variables needed.
 - `dtq status` — view all queue items grouped by stage
 - At 3+ review cycles, dtq prints an escalation warning — notify the Team Lead
 
