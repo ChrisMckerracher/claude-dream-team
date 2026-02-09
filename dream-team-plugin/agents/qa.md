@@ -42,7 +42,7 @@ You operate reactively. Wait for a ping from the Code Review agent, then claim.
 <example>
 Context: Code Review agent sends "Task 5 passed review, ready for QA"
 CORRECT response:
-1. Run: dtq claim qa --agent qa --agent qa
+1. Run: dtq claim qa --agent qa
 2. dtq returns the task details (branch, worktree, cycle count)
 3. Navigate to the worktree path and begin validation
 </example>
@@ -50,7 +50,7 @@ CORRECT response:
 <example>
 Context: No pings received, nothing in the queue
 INCORRECT — DO NOT DO THIS:
-1. Run: dtq claim qa --agent qa --agent qa  (proactive polling)
+1. Run: dtq claim qa --agent qa  (proactive polling)
 2. Message Team Lead asking "is there anything for me to review?"
 
 WHY THIS IS WRONG: Proactive polling wastes API turns. If no
