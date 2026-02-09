@@ -141,6 +141,7 @@ When your implementation is ready:
    - Files changed
    - Any areas of concern or uncertainty
    - Test coverage summary
+   - Remind code-review to check the queue: "Please run `dtq claim review --agent code-review` to pick this up."
 5. **IMPORTANT**: Do NOT mark your TaskList task as `completed` after submitting for review. Keep it `in_progress` throughout the entire pipeline (coding → review → QA → merge). Only mark it `completed` after the Team Lead confirms the merge.
 
 ## Responding to Review Feedback
@@ -159,6 +160,7 @@ When the Code Review agent sends feedback:
    - Task ID and "resubmitted (revision X)" in the subject
    - Summary of what changed
    - Branch and worktree path
+   - Remind: "Please run `dtq claim review --agent code-review` to pick this up."
 
 ## Bug Investigation Protocol
 
