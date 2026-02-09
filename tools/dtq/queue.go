@@ -4,7 +4,10 @@ import (
 	"encoding/json"
 	"fmt"
 	"os"
+	"os/exec"
+	"path/filepath"
 	"sort"
+	"strings"
 	"syscall"
 	"time"
 )
@@ -42,10 +45,42 @@ type StatusResponse struct {
 
 // File I/O with locking
 
-const storePath = ".dtq/queue.json"
-const storeDir = ".dtq"
+func getStoreDir() string {
+	// 1. Explicit env var takes priority
+	if d := os.Getenv("DTQ_QUEUE_DIR"); d != "" {
+		return d
+	}
+	// 2. Use git to find the main repo root (works from worktrees too).
+	//    git rev-parse --git-common-dir returns the main repo's .git even
+	//    when running from a linked worktree.
+	out, err := exec.Command("git", "rev-parse", "--git-common-dir").Output()
+	if err == nil {
+		gitDir := strings.TrimSpace(string(out))
+		// gitDir is something like "/path/to/main-repo/.git"
+		// The main repo root is the parent of that.
+		repoRoot := filepath.Dir(gitDir)
+		// Resolve to absolute path in case gitDir was relative
+		if abs, err := filepath.Abs(repoRoot); err == nil {
+			repoRoot = abs
+		}
+		candidate := repoRoot + "/.dtq"
+		if _, err := os.Stat(candidate + "/queue.json"); err == nil {
+			return candidate
+		}
+		// .dtq might not exist yet — return it anyway so it gets created
+		return candidate
+	}
+	// 3. Fallback to relative path
+	return ".dtq"
+}
+
+func getStorePath() string {
+	return getStoreDir() + "/queue.json"
+}
 
 func withLock(fn func(*Queue) error) error {
+	storeDir := getStoreDir()
+	storePath := getStorePath()
 	if err := os.MkdirAll(storeDir, 0755); err != nil {
 		return fmt.Errorf("cannot create %s: %w", storeDir, err)
 	}

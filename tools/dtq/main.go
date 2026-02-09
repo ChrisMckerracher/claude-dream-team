@@ -8,13 +8,18 @@ import (
 )
 
 func main() {
-	if len(os.Args) < 2 {
-		usage()
-		os.Exit(1)
+	// Extract --agent flag from anywhere in args, or fall back to env var
+	agent, remaining := extractGlobalFlag(os.Args[1:], "--agent")
+	if agent == "" {
+		agent = os.Getenv("DTQ_AGENT")
 	}
-	agent := os.Getenv("DTQ_AGENT")
 	if agent == "" {
 		agent = "unknown"
+	}
+
+	if len(remaining) < 1 {
+		usage()
+		os.Exit(1)
 	}
 
 	var (
@@ -22,17 +27,17 @@ func main() {
 		err    error
 	)
 
-	switch os.Args[1] {
+	switch remaining[0] {
 	case "submit":
-		result, err = cmdSubmit(os.Args[2:], agent)
+		result, err = cmdSubmit(remaining[1:], agent)
 	case "claim":
-		result, err = cmdClaim(os.Args[2:], agent)
+		result, err = cmdClaim(remaining[1:], agent)
 	case "approve":
-		result, err = cmdApprove(os.Args[2:], agent)
+		result, err = cmdApprove(remaining[1:], agent)
 	case "reject":
-		result, err = cmdReject(os.Args[2:], agent)
+		result, err = cmdReject(remaining[1:], agent)
 	case "status":
-		result, err = cmdStatus(os.Args[2:])
+		result, err = cmdStatus(remaining[1:])
 	case "help", "--help", "-h":
 		usage()
 		return
@@ -151,6 +156,24 @@ func flagValue(args []string, flag string) string {
 	return ""
 }
 
+// extractGlobalFlag pulls a --flag value from anywhere in args and returns
+// the value plus the remaining args with the flag removed.
+func extractGlobalFlag(args []string, flag string) (string, []string) {
+	var remaining []string
+	value := ""
+	for i := 0; i < len(args); i++ {
+		if args[i] == flag && i+1 < len(args) {
+			value = args[i+1]
+			i++ // skip the value
+		} else if strings.HasPrefix(args[i], flag+"=") {
+			value = strings.TrimPrefix(args[i], flag+"=")
+		} else {
+			remaining = append(remaining, args[i])
+		}
+	}
+	return value, remaining
+}
+
 func exitError(format string, args ...interface{}) {
 	msg := fmt.Sprintf(format, args...)
 	resp, _ := json.Marshal(map[string]string{"error": msg})
@@ -168,6 +191,10 @@ Usage:
   dtq reject <task-id> --reason <text>      Reject and send back for revision
   dtq status [task-id]                      Show queue (or single item detail)
 
-Environment:
-  DTQ_AGENT   Your agent name (default: "unknown")`)
+Global flags:
+  --agent <name>   Your agent name (overrides DTQ_AGENT env var)
+
+Environment (optional, auto-detected when possible):
+  DTQ_AGENT       Your agent name (default: "unknown")
+  DTQ_QUEUE_DIR   Queue directory (default: auto-detect from git root)`)
 }

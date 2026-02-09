@@ -50,4 +50,12 @@ if [ -f "$DTQ_BIN" ]; then
   export PATH="${DTQ_DIR}:${PATH}"
 fi
 
+# Set DTQ_QUEUE_DIR to main repo root so all agents share the same queue.
+# Export for current shell AND set at tmux level so spawned teammates inherit it.
+export DTQ_QUEUE_DIR="$(pwd)/.dtq"
+if command -v tmux &>/dev/null && [ -n "$TMUX" ]; then
+  tmux setenv DTQ_QUEUE_DIR "$DTQ_QUEUE_DIR"
+  tmux setenv PATH "${DTQ_DIR}:${PATH}"
+fi
+
 echo "Dream Team session initialized."
