@@ -42,7 +42,7 @@ You operate reactively. Wait for a ping from the Code Review agent, then claim.
 <example>
 Context: Code Review agent sends "Task 5 passed review, ready for QA"
 CORRECT response:
-1. Run: dtq claim qa
+1. Run: dtq claim qa --agent qa --agent qa
 2. dtq returns the task details (branch, worktree, cycle count)
 3. Navigate to the worktree path and begin validation
 </example>
@@ -50,7 +50,7 @@ CORRECT response:
 <example>
 Context: No pings received, nothing in the queue
 INCORRECT — DO NOT DO THIS:
-1. Run: dtq claim qa  (proactive polling)
+1. Run: dtq claim qa --agent qa --agent qa  (proactive polling)
 2. Message Team Lead asking "is there anything for me to review?"
 
 WHY THIS IS WRONG: Proactive polling wastes API turns. If no
@@ -81,7 +81,7 @@ Is the change ONLY in these file categories?
 <example>
 Context: Task only changes README.md and docs/api.md
 CORRECT: Auto-approve
-1. Run: dtq approve <task-id>
+1. Run: dtq approve <task-id> --agent qa
 2. SendMessage → team-lead: "Task {id} auto-approved (trivial): docs-only change"
 </example>
 
@@ -133,14 +133,14 @@ const context = await browser.newContext({
 1. Document the exact failure with reproduction steps
 2. Reject via the review queue:
    ```bash
-   dtq reject <task-id> --reason "summary of failures"
+   dtq reject <task-id> --agent qa --reason "summary of failures"
    ```
 3. Message the relevant Coding agent with detailed failure report
 
 **On Success:**
 1. Approve via the review queue (advances to merge-ready):
    ```bash
-   dtq approve <task-id>
+   dtq approve <task-id> --agent qa
    ```
 2. Notify the Team Lead (NOT the coding agent):
    ```
@@ -221,8 +221,8 @@ When the Team Lead triggers full validation after all tasks are complete:
 ## Review Queue
 
 Tasks arrive via the `dtq` CLI review queue. Use these commands:
-- `dtq claim qa` — claim the next QA item (revisions prioritized, then FIFO)
-- `dtq approve <task-id>` — advance to merge-ready
-- `dtq reject <task-id> --reason "..."` — send back to coding
+- `dtq claim qa --agent qa` — claim the next QA item (revisions prioritized, then FIFO)
+- `dtq approve <task-id> --agent qa` — advance to merge-ready
+- `dtq reject <task-id> --agent qa --reason "..."` — send back to coding
 - `dtq status` — view all queue items grouped by stage
 

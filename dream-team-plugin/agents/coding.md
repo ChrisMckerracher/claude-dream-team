@@ -131,10 +131,9 @@ When your implementation is ready:
 2. Commit your changes with a clear message
 3. Submit to the review queue using the `dtq` CLI:
    ```bash
-   export DTQ_QUEUE_DIR="$(git rev-parse --show-toplevel)/../.dtq" 2>/dev/null || true
-   dtq submit <task-id> --branch <your-branch-name> --worktree <worktree-path>
+   dtq submit <task-id> --branch <your-branch-name> --worktree <worktree-path> --agent <your-agent-name>
    ```
-   **CRITICAL**: Always set `DTQ_QUEUE_DIR` before running dtq from a worktree. Without this, dtq creates a separate queue file in your worktree directory and code-review will never see your submission.
+   The queue directory is auto-detected from the git root.
 4. Send a direct message to the Code Review agent via SendMessage (recipient: "code-review"):
    - Task ID and brief description
    - Branch name
@@ -142,7 +141,6 @@ When your implementation is ready:
    - Files changed
    - Any areas of concern or uncertainty
    - Test coverage summary
-   - Remind code-review to check the queue: "Please run `dtq claim review` to pick this up."
 5. **IMPORTANT**: Do NOT mark your TaskList task as `completed` after submitting for review. Keep it `in_progress` throughout the entire pipeline (coding → review → QA → merge). Only mark it `completed` after the Team Lead confirms the merge.
 
 ## Responding to Review Feedback
@@ -155,14 +153,12 @@ When the Code Review agent sends feedback:
 5. Re-run tests after changes
 6. Resubmit via:
    ```bash
-   export DTQ_QUEUE_DIR="$(git rev-parse --show-toplevel)/../.dtq" 2>/dev/null || true
-   dtq submit <task-id> --branch <branch> --worktree <path>
+   dtq submit <task-id> --branch <branch> --worktree <path> --agent <your-agent-name>
    ```
 7. Send a direct message to the Code Review agent (NOT Team Lead) via SendMessage with:
    - Task ID and "resubmitted (revision X)" in the subject
    - Summary of what changed
    - Branch and worktree path
-   - Remind: "Please run `dtq claim review` to pick this up."
 
 ## Bug Investigation Protocol
 
