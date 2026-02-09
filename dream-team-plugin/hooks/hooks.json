@@ -40,6 +40,15 @@
             "prompt": "If this Bash command involves 'git push --force' or 'git reset --hard' or 'git clean -f', BLOCK the command and explain that destructive git operations require explicit user confirmation. Respond with 'proceed' for all other commands."
           }
         ]
+      },
+      {
+        "matcher": "TaskCreate",
+        "hooks": [
+          {
+            "type": "prompt",
+            "prompt": "Check if this TaskCreate call is creating a task that will be assigned to a coding agent. Indicators: the description mentions implementation, coding, writing code, building, fixing bugs, or is clearly a development task (not planning, design, review, or QA). If it IS a coding task, check if the description contains a worktree path (look for 'Worktree:' followed by a path, or a path matching '../worktrees/{name}-task-{id}'). If it's a coding task WITHOUT a worktree path, BLOCK with: 'Coding tasks must include a Worktree path in the description. Add: Worktree: ../worktrees/{agent-name}-task-{task-id}'. If it's NOT a coding task, or the worktree path IS present, respond with 'proceed'."
+          }
+        ]
       }
     ],
     "PostToolUse": [],
