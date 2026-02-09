@@ -126,6 +126,44 @@ git worktree list --porcelain
 
 The Team Lead assigns worktree paths when creating tasks. Coding agents should use the assigned path from their task description (e.g. `Worktree: ../worktrees/coder-1-task-42`), not invent their own. This ensures the worktree path is known throughout the pipeline — Code Review and QA agents receive it via handoff messages and dtq.
 
+## Worktree Path in Task Assignment
+
+**CRITICAL**: The Team Lead MUST include `Worktree: ../worktrees/{agent-name}-task-{id}` in every coding task description. This is enforced by a `PreToolUse` hook on `TaskCreate` that blocks coding tasks without worktree paths.
+
+### Path Flow Through Pipeline
+
+The worktree path flows through the entire review pipeline:
+
+```
+Team Lead task assignment
+  ↓ (includes Worktree: ../worktrees/coder-1-task-42)
+Coding Agent reads from task description
+  ↓ (passes worktree path to dtq submit)
+dtq submit --worktree <path>
+  ↓ (stores worktree path in queue item)
+dtq claim output
+  ↓ (returns worktree path to Code Review/QA)
+Code Review/QA handoff messages
+  ↓ (includes worktree path for transparency)
+Team Lead merge confirmation
+```
+
+### Why This Matters
+
+1. **Consistency**: All agents reference the same path — no confusion about where the code lives
+2. **Traceability**: The path appears in task descriptions, dtq output, and handoff messages
+3. **Automation**: dtq returns the worktree path in `claim` output, so Code Review/QA agents know exactly where to navigate
+4. **Hook enforcement**: Missing paths are caught at task creation time, not during execution
+
+### Task Assignment Checklist for Team Lead
+
+Before assigning a coding task, verify the description includes:
+- [ ] Task ID and title
+- [ ] Acceptance criteria
+- [ ] **Worktree path**: `Worktree: ../worktrees/{agent-name}-task-{id}`
+- [ ] Base branch for the worktree
+- [ ] Reference to design docs (if applicable)
+
 ## Rules
 
 - **Always** use the worktree path assigned by the Team Lead
