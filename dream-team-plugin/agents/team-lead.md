@@ -1,4 +1,5 @@
 ---
+isolation: worktree
 name: team-lead
 model: opus
 color: blue

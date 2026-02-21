@@ -1,4 +1,5 @@
 ---
+isolation: worktree
 name: architect
 model: opus
 color: cyan

@@ -1,4 +1,5 @@
 ---
+isolation: worktree
 name: code-review
 model: sonnet
 color: magenta

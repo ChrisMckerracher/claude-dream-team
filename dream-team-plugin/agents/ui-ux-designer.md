@@ -1,4 +1,5 @@
 ---
+isolation: worktree
 name: ui-ux-designer
 model: sonnet
 color: red
