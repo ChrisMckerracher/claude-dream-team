@@ -1,4 +1,5 @@
 ---
+isolation: worktree
 name: coding
 model: sonnet
 color: green

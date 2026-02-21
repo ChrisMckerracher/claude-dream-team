@@ -1,4 +1,5 @@
 ---
+isolation: worktree
 name: product
 model: sonnet
 color: green

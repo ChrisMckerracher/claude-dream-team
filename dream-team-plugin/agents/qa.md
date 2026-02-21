@@ -1,4 +1,5 @@
 ---
+isolation: worktree
 name: qa
 model: sonnet
 color: yellow
